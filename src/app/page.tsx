@@ -1,10 +1,13 @@
+"use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import CatalogoProductos from "@/features/catalogo/components/CatalogoProductos";
 
 export default function Home() {
+  const [seccionActiva, setSeccionActiva] = useState("inicio");
   return (
-    <main className="min-h-screen bg-[#fff7f9]">
+    <main id="inicio" className="min-h-screen bg-[#fff7f9]">
       {/* Encabezado */}
       <header className="sticky top-0 z-50 border-b border-[#f0dce4]/80 bg-white/95 backdrop-blur-md">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-4 sm:px-8">
@@ -17,23 +20,30 @@ export default function Home() {
             </p>
           </Link>
 
-          <nav className="flex items-center gap-4 text-xs font-medium text-[#795f6b] sm:gap-7 sm:text-sm">
-            <Link href="/" className="transition hover:text-[#a5446b]">
-              Inicio
-            </Link>
-            <Link
-              href="#catalogo"
-              className="transition hover:text-[#a5446b]"
-            >
-              Catálogo
-            </Link>
-            <Link
-              href="#contacto"
-              className="hidden transition hover:text-[#a5446b] sm:inline"
-            >
-              Contacto
-            </Link>
-          </nav>
+          
+
+<nav className="flex items-center gap-4 text-xs font-medium sm:gap-7 sm:text-sm">
+  {[
+    { id: "inicio", nombre: "Inicio", href: "#inicio" },
+    { id: "catalogo", nombre: "Catálogo", href: "#catalogo" },
+    { id: "contacto", nombre: "Contacto", href: "#contacto" },
+  ].map((item) => (
+    <a
+      key={item.id}
+      href={item.href}
+      onClick={() => setSeccionActiva(item.id)}
+      className={`relative py-2 transition-colors duration-200 ${
+        seccionActiva === item.id
+          ? "font-bold text-[#81334f] after:scale-x-100"
+          : "text-[#795f6b] hover:text-[#a5446b] after:scale-x-0"
+      } after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-full after:rounded-full after:bg-[#a5446b] after:transition-transform after:duration-200`}
+    >
+      {item.nombre}
+    </a>
+  ))}
+</nav>
+
+
         </div>
       </header>
 
