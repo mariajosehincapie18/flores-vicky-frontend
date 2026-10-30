@@ -60,6 +60,14 @@ export default function Home() {
         <span className="hidden text-[#81334f] sm:inline">
           Hola, {usuario?.nombre}
         </span>
+        {usuario?.role === "admin" && (
+  <Link
+    href="/admin"
+    className="rounded-full border border-[#a5446b] px-4 py-2 text-[#81334f] transition hover:bg-[#f9e8ee]"
+  >
+    Administración
+  </Link>
+)}
         <button
           onClick={cerrar}
           className="rounded-full bg-[#a5446b] px-4 py-2 text-white transition hover:bg-[#81334f]"
