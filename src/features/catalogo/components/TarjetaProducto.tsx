@@ -1,6 +1,6 @@
 
-import type { Producto } from "../domain/producto";
 import Link from "next/link";
+import type { Producto } from "../domain/producto";
 
 interface TarjetaProductoProps {
   producto: Producto;
@@ -17,10 +17,11 @@ export default function TarjetaProducto({
 
   return (
     <article className="group flex h-full flex-col overflow-hidden rounded-2xl border border-[#f0dce4] bg-white shadow-[0_4px_20px_rgba(110,52,76,0.05)] transition-all duration-300 hover:-translate-y-1.5 hover:border-[#e7bfd0] hover:shadow-[0_14px_35px_rgba(110,52,76,0.12)]">
+
       <Link
-  href={`/productos/${producto.id}`}
-  className="relative block h-64 overflow-hidden bg-[#fff1f5]"
->
+        href={`/productos/${producto.id}`}
+        className="relative block h-64 overflow-hidden bg-[#fff1f5]"
+      >
         {imagen ? (
           <img
             src={imagen}
@@ -42,23 +43,11 @@ export default function TarjetaProducto({
           {producto.categoria}
         </p>
 
-        <h2 className="mb-3 text-lg font-semibold leading-snug text-[#592e43]">
-          {producto.nombre}
-        </h2>
-
-        {producto.descripcion && (
-          <p className="text-sm leading-7 text-[#795f6b]">
-            {producto.descripcion}
-          </p>
-        )}
-
-        {producto.caracteristicas && (
-          <p className="mt-3 border-t border-[#f5e8ed] pt-3 text-xs leading-6 text-[#987987]">
-            {Array.isArray(producto.caracteristicas)
-              ? producto.caracteristicas.join(" · ")
-              : producto.caracteristicas}
-          </p>
-        )}
+        <Link href={`/productos/${producto.id}`}>
+          <h2 className="text-lg font-semibold leading-snug text-[#592e43] transition-colors hover:text-[#a5446b]">
+            {producto.nombre}
+          </h2>
+        </Link>
       </div>
     </article>
   );
