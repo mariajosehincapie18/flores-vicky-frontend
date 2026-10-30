@@ -19,7 +19,7 @@ La aplicación cuenta con funcionalidades diferenciadas según el rol del usuari
 
 ## 3. Enlaces del proyecto
 
-- **Aplicación web:** https://flores-vicky-frontend.vercel.app
+- **Aplicación web:** https://flores-vicky-frontend.vercel.app 
 - **API desplegada:** https://flores-vicky-backend.onrender.com
 - **Repositorio del frontend:** https://github.com/mariajosehincapie18/flores-vicky-frontend
 - **Repositorio del backend:** https://github.com/mariajosehincapie18/flores-vicky-backend
