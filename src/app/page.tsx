@@ -4,11 +4,20 @@ import { useState } from "react";
 import Link from "next/link";
 import CatalogoProductos from "@/features/catalogo/components/CatalogoProductos";
 import { useAuth } from "@/features/auth/hooks/useAuth";
+import { useRouter } from "next/navigation";
 
 
 export default function Home() {
   const [seccionActiva, setSeccionActiva] = useState("inicio");
   const { usuario, autenticado, cargando, cerrar } = useAuth();
+  const [mensajeContacto, setMensajeContacto] = useState("");
+  const router = useRouter();
+
+  const [enviandoConsulta, setEnviandoConsulta] = useState(false);
+  const [respuestaConsulta, setRespuestaConsulta] = useState("");
+  const [errorConsulta, setErrorConsulta] = useState("");
+
+  
   return (
     <main id="inicio" className="min-h-screen bg-[#fff7f9]">
       {/* Encabezado */}
@@ -142,32 +151,176 @@ export default function Home() {
       {/* Catálogo conectado a la API */}
       <CatalogoProductos />
 
-      {/* Contacto */}
-      <footer id="contacto" className="border-t border-[#f0dce4] bg-white px-5 py-12 sm:px-8">
-        <div className="mx-auto max-w-7xl text-center">
-          <p className="text-xs font-bold uppercase tracking-[0.25em] text-[#a5446b]">
-            Un detalle puede cambiarlo todo
-          </p>
+      
+{/* Contacto */}
+<footer
+  id="contacto"
+  className="border-t border-[#f0dce4] bg-white px-5 py-14 sm:px-8"
+>
+  <div className="mx-auto max-w-5xl">
+    <div className="text-center">
+      <p className="text-xs font-bold uppercase tracking-[0.25em] text-[#a5446b]">
+        Estamos para ayudarte
+      </p>
 
-          <h2 className="mt-3 font-serif text-2xl text-[#592e43] sm:text-3xl">
-            Hagamos florecer tus ideas
-          </h2>
+      <h2 className="mt-3 font-serif text-3xl text-[#592e43] sm:text-4xl">
+        Hagamos florecer tus ideas
+      </h2>
 
-          <p className="mx-auto mt-4 max-w-lg text-sm leading-7 text-[#795f6b]">
-            Gracias por elegir Flores y Detalles Vicky para acompañar
-            tus celebraciones y regalar momentos inolvidables.
-          </p>
+      <p className="mx-auto mt-4 max-w-lg text-sm leading-7 text-[#795f6b]">
+        ¿Tienes alguna pregunta, necesitas una asesoría o quieres
+        preparar un detalle especial? Nos encantará ayudarte.
+      </p>
+    </div>
 
-          <div className="mt-7 border-t border-[#f5e8ed] pt-6">
-            <p className="text-sm font-semibold text-[#81334f]">
-              Flores y Detalles Vicky
+    <div className="mt-10 grid gap-8 md:grid-cols-2">
+      {/* Formulario */}
+      <div className="rounded-3xl border border-[#f0dce4] bg-[#fff7f9] p-6 sm:p-8">
+        <h3 className="text-xl font-semibold text-[#592e43]">
+          Escríbenos
+        </h3>
+
+        <p className="mt-2 text-sm leading-6 text-[#795f6b]">
+          Cuéntanos qué necesitas y nos pondremos en contacto contigo.
+        </p>
+
+        <form
+          className="mt-6"
+          onSubmit={async (e) => {
+  e.preventDefault();
+
+  if (!autenticado) {
+    router.push(`/login?next=${encodeURIComponent("/#contacto")}`);
+    return;
+  }
+
+  setEnviandoConsulta(true);
+  setRespuestaConsulta("");
+  setErrorConsulta("");
+
+  try {
+    const token = localStorage.getItem("vicky_token");
+
+    const respuesta = await fetch(
+      `${process.env.NEXT_PUBLIC_API_HOST}/api/consultas`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          mensaje: mensajeContacto,
+        }),
+      }
+    );
+
+    const datos = await respuesta.json();
+
+    if (!respuesta.ok) {
+      throw new Error(datos.mensaje || "No se pudo enviar la consulta");
+    }
+
+    setRespuestaConsulta("¡Tu mensaje fue enviado con éxito!");
+    setMensajeContacto("");
+  } catch (error) {
+    setErrorConsulta(
+      error instanceof Error
+        ? error.message
+        : "Ocurrió un error al enviar tu consulta"
+    );
+  } finally {
+    setEnviandoConsulta(false);
+  }
+}}
+        >
+          <label className="block text-sm font-medium text-[#592e43]">
+            Tu mensaje
+          </label>
+
+          <textarea
+            value={mensajeContacto}
+            onChange={(e) => setMensajeContacto(e.target.value)}
+            required
+            rows={5}
+            placeholder="Escribe aquí tu consulta..."
+            className="mt-2 w-full rounded-xl border border-[#e7bfd0] bg-white p-4 text-sm text-[#592e43] outline-none focus:border-[#a5446b]"
+          />
+<button
+  type="submit"
+  disabled={!mensajeContacto.trim() || enviandoConsulta}
+  className="mt-4 w-full rounded-full bg-[#a5446b] px-6 py-3.5 text-sm font-semibold text-white transition hover:bg-[#81334f] disabled:opacity-50"
+>
+  {enviandoConsulta
+    ? "Enviando..."
+    : autenticado
+      ? "Enviar consulta"
+      : "Iniciar sesión para enviar"}
+</button>
+
+{respuestaConsulta && (
+  <p className="mt-3 text-center text-sm font-medium text-green-700">
+    {respuestaConsulta}
+  </p>
+)}
+
+{errorConsulta && (
+  <p className="mt-3 text-center text-sm font-medium text-red-600">
+    {errorConsulta}
+  </p>
+)}
+
+          {!autenticado && (
+            <p className="mt-3 text-center text-xs text-[#987987]">
+              Necesitas una cuenta para enviar tu consulta.
+              <Link href="/registro" className="ml-1 font-semibold text-[#a5446b] underline">
+                Regístrate aquí
+              </Link>
             </p>
-            <p className="mt-2 text-xs text-[#987987]">
-              Cada detalle cuenta una historia.
-            </p>
-          </div>
-        </div>
-      </footer>
+          )}
+        </form>
+      </div>
+
+      {/* WhatsApp */}
+      <div className="flex flex-col justify-center rounded-3xl bg-[#fff1f5] p-6 sm:p-8">
+        <div className="text-4xl">♡</div>
+
+        <h3 className="mt-4 text-xl font-semibold text-[#592e43]">
+          ¿Prefieres hablar directamente?
+        </h3>
+
+        <p className="mt-3 text-sm leading-7 text-[#795f6b]">
+          Escríbenos por WhatsApp para consultar domicilios,
+          recibir asesoría o resolver cualquier inquietud.
+        </p>
+
+        <a
+          href="https://wa.me/573148308537?text=Hola%2C%20quiero%20informaci%C3%B3n%20sobre%20sus%20productos%20y%20servicios."
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-7 flex items-center justify-center gap-2 rounded-full bg-[#20c76a] px-6 py-3.5 text-sm font-semibold text-white transition hover:bg-[#18a957]"
+        >
+          Consultar por WhatsApp
+        </a>
+
+        <p className="mt-4 text-center text-xs text-[#987987]">
+          +57 314 830 8537
+        </p>
+      </div>
+    </div>
+
+    <div className="mt-12 border-t border-[#f5e8ed] pt-7 text-center">
+      <p className="text-sm font-semibold text-[#81334f]">
+        Flores y Detalles Vicky
+      </p>
+
+      <p className="mt-2 text-xs text-[#987987]">
+        Cada detalle cuenta una historia. ♡
+      </p>
+    </div>
+  </div>
+</footer>
+
     </main>
   );
 }
