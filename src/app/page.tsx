@@ -3,9 +3,12 @@
 import { useState } from "react";
 import Link from "next/link";
 import CatalogoProductos from "@/features/catalogo/components/CatalogoProductos";
+import { useAuth } from "@/features/auth/hooks/useAuth";
+
 
 export default function Home() {
   const [seccionActiva, setSeccionActiva] = useState("inicio");
+  const { usuario, autenticado, cargando, cerrar } = useAuth();
   return (
     <main id="inicio" className="min-h-screen bg-[#fff7f9]">
       {/* Encabezado */}
@@ -41,6 +44,29 @@ export default function Home() {
       {item.nombre}
     </a>
   ))}
+
+  {!cargando && (
+    autenticado ? (
+      <div className="flex items-center gap-3">
+        <span className="hidden text-[#81334f] sm:inline">
+          Hola, {usuario?.nombre}
+        </span>
+        <button
+          onClick={cerrar}
+          className="rounded-full bg-[#a5446b] px-4 py-2 text-white transition hover:bg-[#81334f]"
+        >
+          Cerrar sesión
+        </button>
+      </div>
+    ) : (
+      <Link
+        href="/login"
+        className="rounded-full bg-[#a5446b] px-4 py-2 text-white transition hover:bg-[#81334f]"
+      >
+        Iniciar sesión
+      </Link>
+    )
+  )}
 </nav>
 
 

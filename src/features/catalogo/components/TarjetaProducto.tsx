@@ -1,5 +1,6 @@
 
 import type { Producto } from "../domain/producto";
+import Link from "next/link";
 
 interface TarjetaProductoProps {
   producto: Producto;
@@ -16,7 +17,10 @@ export default function TarjetaProducto({
 
   return (
     <article className="group flex h-full flex-col overflow-hidden rounded-2xl border border-[#f0dce4] bg-white shadow-[0_4px_20px_rgba(110,52,76,0.05)] transition-all duration-300 hover:-translate-y-1.5 hover:border-[#e7bfd0] hover:shadow-[0_14px_35px_rgba(110,52,76,0.12)]">
-      <div className="relative h-64 overflow-hidden bg-[#fff1f5]">
+      <Link
+  href={`/productos/${producto.id}`}
+  className="relative block h-64 overflow-hidden bg-[#fff1f5]"
+>
         {imagen ? (
           <img
             src={imagen}
@@ -31,7 +35,7 @@ export default function TarjetaProducto({
         )}
 
         <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-black/10 to-transparent" />
-      </div>
+      </Link>
 
       <div className="flex flex-1 flex-col p-5 sm:p-6">
         <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.18em] text-[#a5446b]">

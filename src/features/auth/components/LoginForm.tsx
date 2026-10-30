@@ -22,8 +22,11 @@ export default function LoginForm() {
 
     try {
       await iniciar({ email, password });
-      router.push("/");
-      router.refresh();
+      const destino =
+  new URLSearchParams(window.location.search).get("next") || "/";
+
+router.push(destino);
+router.refresh();
     } catch (err) {
       setError(
         err instanceof Error
