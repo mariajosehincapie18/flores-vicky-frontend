@@ -59,9 +59,7 @@ export async function http<T>(
           ? data.message
           : `Error en la petición (${response.status})`;
 
-    if (response.status === 401) {
-      throw new Error("Tu sesión ha expirado o no tienes autorización.");
-    }
+    
 
     throw new Error(message);
   }
